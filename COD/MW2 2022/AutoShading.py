@@ -2,10 +2,14 @@ import os
 import bpy
 import math
 
+
 # CHANGE THIS 2 PATHS TO THE SHADER.BLEND AND SEMODEL FILE YOU JUST EXPORTED ON YOUR PC
 shader_blend = R"F:\Coding\GameShading-Blender\COD\MW2 2022\MW2_Shader.blend"
 Path = R"E:\Game Porting\COD MW2 2022\Default M4\Default M4\att_vm_p01_ar_mike4_rec_v0_LOD0.semodel"
 
+# GLOBAL IMAGE SETTINGS
+UseGlobalImages = True
+GlobalImagePath = R"E:\Game Porting\COD MW2 2022\globaliamges"
 
 
 with bpy.data.libraries.load(shader_blend) as (data_from, data_to):
@@ -30,8 +34,10 @@ for dirpath, dirnames, filenames in os.walk(Folder):
         MName = str(filename).split("_images", 1)[0]
         print(MName)
         Path = dirpath + "/" + filename
-        img_folder = dirpath + "/_images/" + filename.rsplit("_", 1)[0]
-        print(img_folder)
+        if UseGlobalImages:
+            img_folder = GlobalImagePath
+        else:
+            img_folder = dirpath + "/_images/" + filename.rsplit("_", 1)[0]
         
         if bpy.data.materials.get(MName):
             mat = bpy.data.materials.get(MName)
@@ -70,7 +76,6 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                         else:
                             if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + ".png"):
                                 Albedo = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + ".png")
-                                print(img_folder + "\\" + lines[i].split(",")[1] + ".png")
                                 tex_image_node: bpy.types.Node
                                 tex_image_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
                                 tex_image_node.location = (-500,600)
