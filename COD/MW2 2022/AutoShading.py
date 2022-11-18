@@ -3,8 +3,8 @@ import bpy
 import math
 
 # CHANGE THIS 2 PATHS TO THE SHADER.BLEND AND SEMODEL FILE YOU JUST EXPORTED ON YOUR PC
-shader_blend = R"D:\Game Porting\COD MW2 2022\MW2_Shader.blend"
-Path = R"D:\Game Porting\COD MW2 2022\grave_sp_mwII\head_hero_graves_lod\head_hero_graves_lod_LOD0.semodel"
+shader_blend = R"F:\Coding\GameShading-Blender\COD\MW2 2022\MW2_Shader.blend"
+Path = R"E:\Game Porting\COD MW2 2022\Default M4\Default M4\att_vm_p01_ar_mike4_rec_v0_LOD0.semodel"
 
 
 
@@ -14,6 +14,8 @@ if bpy.data.materials.get("Shader"):
     bpy.data.materials.remove(bpy.data.materials.get("Shader"))
 if bpy.data.node_groups.get("COD.001"):
     bpy.data.node_groups.remove(bpy.data.node_groups.get("COD.001"))
+if bpy.data.node_groups.get("COD Skin.001"):
+    bpy.data.node_groups.remove(bpy.data.node_groups.get("COD Skin.001"))
 
 def get_image(tex_name, tex_local_path):
     img = bpy.data.images.get(tex_name + ".png")
@@ -22,13 +24,14 @@ def get_image(tex_name, tex_local_path):
     return img
 
 Folder = Path.rsplit("\\", 1)[0] + "\\"
-for i in os.listdir(Folder):
-    if ".txt" in i:
+for dirpath, dirnames, filenames in os.walk(Folder):
+    for filename in [f for f in filenames if f.endswith(".txt")]:
         print("\n")
-        MName = str(i).split("_images", 1)[0]
+        MName = str(filename).split("_images", 1)[0]
         print(MName)
-        Path = Folder + i
-        img_folder = Folder + "_images\\" + str(i).rsplit("_", 1)[0]
+        Path = dirpath + "/" + filename
+        img_folder = dirpath + "/_images/" + filename.rsplit("_", 1)[0]
+        print(img_folder)
         
         if bpy.data.materials.get(MName):
             mat = bpy.data.materials.get(MName)
@@ -124,7 +127,7 @@ for i in os.listdir(Folder):
                             shader.inputs["Alpha"].default_value = 1
                         elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
                             shader.inputs["Alpha"].default_value = 0
-                            mat.blend_method = "BLEND"
+                            mat.blend_method = "HASHED"
                         else:
                             if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + ".png"):
                                 mat.blend_method = "HASHED"
@@ -140,6 +143,8 @@ for i in os.listdir(Folder):
                     elif lines[i].split(",")[0] == "unk_semantic_0x22":
                         if lines[i].split(",")[1] == "ximage_3c29eeff15212c37":
                             shader.inputs["Transparency"].default_value = 1
+                            shader.inputs["Use Transparency"].default_value = 1
+                            mat.blend_method = "BLEND"
                         elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
                             shader.inputs["Transparency"].default_value = 0
                         else:
@@ -151,6 +156,8 @@ for i in os.listdir(Folder):
                                 tex_image_node.image = Transparency
                                 tex_image_node.label = "Transparency"
                                 tex_image_node.image.alpha_mode = "CHANNEL_PACKED"
+                                shader.inputs["Use Transparency"].default_value = 1
+                                mat.blend_method = "BLEND"
                                 link(tex_image_node.outputs["Color"], shader.inputs["Transparency"])
                     elif lines[i].split(",")[0] == "unk_semantic_0x26":
                         if lines[i].split(",")[1] == "ximage_3c29eeff15212c37":
