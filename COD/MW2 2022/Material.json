@@ -33,9 +33,11 @@
         "unk_semantic_0x27": "unknown",
         "unk_semantic_0x28": "unknown",
         "unk_semantic_0x29": "unknown",
-        "unk_semantic_0x32": "unknown",
+        "unk_semantic_0x32": "Detail Mask",
+        "unk_semantic_0x33": "unknown",
         "unk_semantic_0x34": "Blendshape Albedo",
-        "unk_semantic_0x35": "Face Extra Normal (Maybe for blendshape?)"
+        "unk_semantic_0x35": "Face Extra Normal (Maybe for blendshape?)",
+        "unk_semantic_0x3C": "unknown"
     },
     "1x1": {
         "ximage_5c2d1c3e952cb190": "()",
