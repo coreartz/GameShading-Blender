@@ -5,12 +5,20 @@ import math
 
 # CHANGE THIS 2 PATHS TO THE SHADER.BLEND AND SEMODEL FILE YOU JUST EXPORTED ON YOUR PC
 shader_blend = R"F:\Coding\GameShading-Blender\COD\MW2 2022\MW2_Shader.blend"
-Path = R"E:\Game Porting\COD MW2 2022\Default M4\Default M4\att_vm_p01_ar_mike4_rec_v0_LOD0.semodel"
+Path = R"E:\Game Porting\COD MW2 2022\CDL\Faze\Away\body_mp_cdl_male_iw9_faze_away\body_mp_cdl_male_iw9_faze_away_LOD0.semodel"
 
 # GLOBAL IMAGE SETTINGS
 UseGlobalImages = True
-GlobalImagePath = R"E:\Game Porting\COD MW2 2022\globaliamges"
+GlobalImagePath = R"E:\Game Porting\COD MW2 2022\CDL\Faze\Away\body_mp_cdl_male_iw9_faze_away\_images"
 
+# CDL SKIN SETTINGS
+IsCDLskin = True
+# [Red,Green,Blue,Alpha] 
+# Color1 = Mask Red, Color2 = Mask Green, Color3 = Mask Blue
+AlbedoTint = [0.1,0.1,0.1,1]
+Color1 = [1,0,0,1]
+Color2 = [1,1,1,1]
+Color3 = [1,1,1,1]
 
 with bpy.data.libraries.load(shader_blend) as (data_from, data_to):
     data_to.materials = data_from.materials 
@@ -222,6 +230,41 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                                         else:
                                             tex_image_node.label = "0x26"
                                         break 
-                                    r_px = r_px + int(test_num*4)  
+                                    r_px = r_px + int(test_num*4)
+                    elif lines[i].split(",")[0] == "unk_semantic_0x32":
+                        if IsCDLskin:
+                            if lines[i].split(",")[1] == "ximage_3c29eeff15212c37":
+                                pass
+                            elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
+                                pass
+                            else:
+                                if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + ".png"):
+                                    CDLMask = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + ".png")
+                                    tex_image_node: bpy.types.Node
+                                    tex_image_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
+                                    tex_image_node.location = (-500,-600)
+                                    tex_image_node.image = CDLMask
+                                    tex_image_node.label = "CDLMask"
+                                    tex_image_node.image.alpha_mode = "CHANNEL_PACKED"
+                                    link(tex_image_node.outputs["Color"], shader.inputs["Detail Mask"])
+                                    shader.inputs["Albedo Tint"].default_value = AlbedoTint
+                                    shader.inputs["Detail Color 3"].default_value = Color3
+                                    shader.inputs["Detail Color 2"].default_value = Color2
+                                    shader.inputs["Detail Color 1"].default_value = Color1
+                                    pixel_float = CDLMask.size[0] * CDLMask.size[1] * 4
+                                    test_num = (CDLMask.size[0] + CDLMask.size[1]) / 2 * 64
+                                    am =int(pixel_float/4/test_num)
+                                    r_px = 0
+                                    for i in range(am):
+                                        R = math.floor(CDLMask.pixels[r_px] *100)
+                                        G = math.floor(CDLMask.pixels[r_px + 1] *100)
+                                        B = math.floor(CDLMask.pixels[r_px + 2] *100)
+                                        if R == 0:
+                                            shader.inputs["Activate Color 1"].default_value = 1
+                                        if G == 0:
+                                            shader.inputs["Activate Color 2"].default_value = 1
+                                        if B == 0:
+                                            shader.inputs["Activate Color 3"].default_value = 1
+                                        r_px = r_px + int(test_num*4)
                     elif lines[i].split(",")[0] == "unk_semantic_0x34":
                         shader.node_tree = bpy.data.node_groups.get("COD Skin") 
