@@ -43,5 +43,11 @@
         "ximage_5c2d1c3e952cb190": "()",
         "ximage_3c29eeff15212c37": "(1,1,1,1)",
         "ximage_4a882744bc523875": "(0,0,0,1)"
+    },
+    "Material Value": {
+        "Albedo Tint": "Tint the Albedo Texture",
+        "Detail Albedo 1": "Tint the Detail Albedo 1 Texture",
+        "Detail Albedo 2": "Tint the Detail Albedo 2 Texture",
+        "Detail Albedo 3": "Tint the Detail Albedo 3 Texture"
     }
 }
