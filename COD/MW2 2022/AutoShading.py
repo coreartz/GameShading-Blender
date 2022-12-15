@@ -7,6 +7,9 @@ import math
 shader_blend = R"F:\Coding\GameShading-Blender\COD\MW2 2022\MW2_Shader.blend"
 Path = R"E:\Game Porting\COD MW2 2022\CDL\Faze\Away\body_mp_cdl_male_iw9_faze_away\body_mp_cdl_male_iw9_faze_away_LOD0.semodel"
 
+#IMAGE FILEFORMAT
+img_format = ".png"
+
 # GLOBAL IMAGE SETTINGS
 UseGlobalImages = True
 GlobalImagePath = R"E:\Game Porting\COD MW2 2022\CDL\Faze\Away\body_mp_cdl_male_iw9_faze_away\_images"
@@ -30,7 +33,7 @@ if bpy.data.node_groups.get("COD Skin.001"):
     bpy.data.node_groups.remove(bpy.data.node_groups.get("COD Skin.001"))
 
 def get_image(tex_name, tex_local_path):
-    img = bpy.data.images.get(tex_name + ".png")
+    img = bpy.data.images.get(tex_name + img_format)
     if img is None:
         img = bpy.data.images.load(tex_local_path)
     return img
@@ -49,11 +52,11 @@ for dirpath, dirnames, filenames in os.walk(Folder):
         
         if bpy.data.materials.get(MName):
             mat = bpy.data.materials.get(MName)
+            mat.use_nodes = True
             link = mat.node_tree.links.new
             nodes = mat.node_tree.nodes
             for node in nodes:
                 nodes.remove(node) 
-            mat.use_nodes = True
             mat.blend_method = "OPAQUE"
             nodes = mat.node_tree.nodes
             
@@ -82,8 +85,8 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                             shader.inputs["Albedo"].default_value = [0.017,0.017,0.023,1]
                             shader.inputs["Albedo Alpha"].default_value = [1,1,1,1]
                         else:
-                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + ".png"):
-                                Albedo = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + ".png")
+                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
+                                Albedo = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + img_format)
                                 tex_image_node: bpy.types.Node
                                 tex_image_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
                                 tex_image_node.location = (-500,600)
@@ -109,8 +112,8 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                             shader.inputs["NRA"].default_value = [0,0,0,1]
                             shader.inputs["NRA Alpha"].default_value = [1,1,1,1]
                         else:
-                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + ".png"):
-                                NM = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + ".png")
+                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
+                                NM = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + img_format)
                                 tex_image_node: bpy.types.Node
                                 tex_image_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
                                 tex_image_node.location = (-500,300)
@@ -126,8 +129,8 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                         elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
                             shader.inputs["Emission"].default_value = [0,0,0,1]
                         else:
-                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + ".png"):
-                                Emission = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + ".png")
+                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
+                                Emission = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + img_format)
                                 tex_image_node: bpy.types.Node
                                 tex_image_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
                                 tex_image_node.location = (-500,0)
@@ -142,9 +145,9 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                             shader.inputs["Alpha"].default_value = 0
                             mat.blend_method = "HASHED"
                         else:
-                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + ".png"):
+                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
                                 mat.blend_method = "HASHED"
-                                Alpha = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + ".png")
+                                Alpha = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + img_format)
                                 tex_image_node: bpy.types.Node
                                 tex_image_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
                                 tex_image_node.location = (-500,-300)
@@ -161,8 +164,8 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                         elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
                             shader.inputs["Transparency"].default_value = 0
                         else:
-                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + ".png"):
-                                Transparency = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + ".png")
+                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
+                                Transparency = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + img_format)
                                 tex_image_node: bpy.types.Node
                                 tex_image_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
                                 tex_image_node.location = (-500,-600)
@@ -179,8 +182,8 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                             shader.inputs["Specular"].default_value = 0
                             mat.blend_method = "HASHED"
                         else:
-                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + ".png"):
-                                Spec_Mask = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + ".png")
+                            if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
+                                Spec_Mask = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + img_format)
                                 tex_image_node: bpy.types.Node
                                 tex_image_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
                                 tex_image_node.location = (-500,-900)
@@ -238,7 +241,7 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                             elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
                                 pass
                             else:
-                                if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + ".png"):
+                                if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
                                     CDLMask = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + ".png")
                                     tex_image_node: bpy.types.Node
                                     tex_image_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
