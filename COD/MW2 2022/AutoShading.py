@@ -1,3 +1,13 @@
+bl_info = {
+    "name": "COD MW2 2022 Autoshade",
+    "description": "Auto texture COD MW2 2022 models",
+    "author": "Core Janik",
+    "version": (0, 4),
+    "blender": (3, 5, 0),
+    "support": "COMMUNITY",
+    "category": "Import",
+}
+
 import os
 import bpy
 import math
