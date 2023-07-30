@@ -78,6 +78,7 @@ for dirpath, dirnames, filenames in os.walk(Folder):
             shader.node_tree = bpy.data.node_groups.get("COD") 
             link(shader.outputs["BSDF"], Output.inputs["Surface"])
             shader.location = (0,300)
+            UseDA_1, UseDA_2, UseDA_3, UseDN_1, UseDN_2, UseDN_3 = False, False, False, False, False, False
             
             with open(Path) as f:
                 lines = f.readlines()
@@ -99,6 +100,8 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                         elif lines[i].split(",")[1] == "ximage_7014a153542e798c":
                             shader.inputs["Albedo"].default_value = [0.017,0.017,0.023,1]
                             shader.inputs["Albedo Alpha"].default_value = [1,1,1,1]
+                        elif lines[i].split(",")[1] == "ximage_18b3d69e4258c738":
+                            UseDA_1 = True
                         else:
                             if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
                                 Albedo = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + img_format)
@@ -119,6 +122,29 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                                         break
                                     alpha_px = alpha_px + int(test_num*4)    
                                 shader.inputs["Albedo Alpha"].default_value = [0,0,0,1]
+                    elif lines[i].split(",")[0] == "unk_semantic_0x1" and UseDA_1 == True:
+                        if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
+                            Albedo = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + img_format)
+                            tex_image_node: bpy.types.Node
+                            tex_image_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
+                            tex_image_node.location = (-500,600)
+                            tex_image_node.image = Albedo
+                            tex_image_node.label = "Albedo"
+                            tex_image_node.image.alpha_mode = "CHANNEL_PACKED"
+                            link(tex_image_node.outputs["Color"], shader.inputs["Albedo"])
+                            pixel_float = Albedo.size[0] * Albedo.size[1] * 4
+                            test_num = (Albedo.size[0] + Albedo.size[1]) / 2 * 32
+                            am =int(pixel_float/4/test_num)
+                            alpha_px = 3
+                            for i in range(am):
+                                if Albedo.pixels[alpha_px] < 0.9999:
+                                    link(tex_image_node.outputs["Alpha"], shader.inputs["Albedo Alpha"])
+                                    break
+                                alpha_px = alpha_px + int(test_num*4)    
+                            shader.inputs["Albedo Alpha"].default_value = [0,0,0,1]
+                        else:
+                            UseDA_2 = True
+                        UseDA_1 = False
                     elif lines[i].split(",")[0] == "unk_semantic_0x4":
                         if lines[i].split(",")[1] == "ximage_3c29eeff15212c37":
                             shader.inputs["NRA"].default_value = [1,1,1,1]
@@ -126,6 +152,8 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                         elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
                             shader.inputs["NRA"].default_value = [0,0,0,1]
                             shader.inputs["NRA Alpha"].default_value = [1,1,1,1]
+                        elif lines[i].split(",")[1] == "ximage_5c2d1c3e952cb190":
+                            UseDN_1 = True
                         else:
                             if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
                                 NM = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + img_format)
@@ -138,6 +166,21 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                                 link(tex_image_node.outputs["Color"], shader.inputs["NRA"])
                                 link(tex_image_node.outputs["Alpha"], shader.inputs["NRA Alpha"])
                                 tex_image_node.image.colorspace_settings.name = "Non-Color"
+                    elif lines[i].split(",")[0] == "unk_semantic_0x5" and UseDN_1 == True:
+                        if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
+                            NM = get_image(lines[i].split(",")[1], img_folder + "\\" + lines[i].split(",")[1] + img_format)
+                            tex_image_node: bpy.types.Node
+                            tex_image_node = mat.node_tree.nodes.new('ShaderNodeTexImage')
+                            tex_image_node.location = (-500,300)
+                            tex_image_node.image = NM
+                            tex_image_node.label = "NOG"
+                            tex_image_node.image.alpha_mode = "CHANNEL_PACKED"
+                            link(tex_image_node.outputs["Color"], shader.inputs["NRA"])
+                            link(tex_image_node.outputs["Alpha"], shader.inputs["NRA Alpha"])
+                            tex_image_node.image.colorspace_settings.name = "Non-Color"
+                        else:
+                            UseDN_2 = True
+                        UseDN_1 = False
                     elif lines[i].split(",")[0] == "unk_semantic_0x8":
                         if "Emission" in shader.inputs:
                             if lines[i].split(",")[1] == "ximage_3c29eeff15212c37":
