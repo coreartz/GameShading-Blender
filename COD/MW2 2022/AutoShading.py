@@ -41,6 +41,8 @@ if bpy.data.node_groups.get("COD.001"):
     bpy.data.node_groups.remove(bpy.data.node_groups.get("COD.001"))
 if bpy.data.node_groups.get("COD Skin.001"):
     bpy.data.node_groups.remove(bpy.data.node_groups.get("COD Skin.001"))
+if bpy.data.node_groups.get("NOG.001"):
+    bpy.data.node_groups.remove(bpy.data.node_groups.get("NOG.001"))
 
 def get_image(tex_name, tex_local_path):
     img = bpy.data.images.get(tex_name + img_format)
