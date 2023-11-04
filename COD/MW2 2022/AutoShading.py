@@ -331,3 +331,41 @@ for dirpath, dirnames, filenames in os.walk(Folder):
                                         if B == 0:
                                             shader.inputs["Activate Color 3"].default_value = 1
                                         r_px = r_px + int(test_num*4)
+
+from bpy_extras.io_utils import ImportHelper
+from bpy.props import (FloatProperty, StringProperty, BoolProperty, EnumProperty, PointerProperty )
+from bpy.types import Operator
+
+class ImportSomeData(Operator, ImportHelper):
+    """Import Valorant Chars and Weapons."""
+    bl_idname = "import_test.some_data"  
+    bl_label = "Import"
+
+    filter_glob: StringProperty(
+        default="*.semodel",
+        options={'HIDDEN'},
+        maxlen=255,  
+    )
+
+    def draw(self, context) :  
+        layout = self.layout  
+        layout.prop(self, "import_mode", expand=True)
+        layout.prop(self, "rig", expand=True)
+
+    def execute(self, context):
+        return read_some_data(context, self.filepath, self)
+
+def menu_func_import(self, context):
+    self.layout.operator(ImportSomeData.bl_idname, text="Valorant Importer")
+
+def register():
+    bpy.utils.register_class(ImportSomeData)
+
+    
+def unregister():
+    bpy.utils.unregister_class(ImportSomeData)
+    bpy.types.TOPBAR_MT_file_import.remove(menu_func_import)
+    bpy.types.TOPBAR_MT_file_import.append(menu_func_import)
+
+if __name__ == "__main__":
+    register()
