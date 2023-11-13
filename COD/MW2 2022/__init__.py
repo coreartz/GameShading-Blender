@@ -100,13 +100,13 @@ def Main(Filepath, context):
 
                         for i in range(len(lines)):
                             if lines[i].split(",")[0] == "unk_semantic_0x0":
-                                if lines[i].split(",")[1] == "ximage_3c29eeff15212c37":
+                                if lines[i].split(",")[1] == "ximage_3c29eeff15212c37" or lines[i].split(",")[1] == "ximage_c29eeff15212c37":
                                     shader.inputs["Albedo"].default_value = [1,1,1,1]
                                     shader.inputs["Albedo Alpha"].default_value = [1,1,1,1]
-                                elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
+                                elif lines[i].split(",")[1] == "ximage_4a882744bc523875" or lines[i].split(",")[1] == "ximage_a882744bc523875":
                                     shader.inputs["Albedo"].default_value = [0,0,0,1]
                                     shader.inputs["Albedo Alpha"].default_value = [1,1,1,1]
-                                elif lines[i].split(",")[1] == "ximage_7014a153542e798c":
+                                elif lines[i].split(",")[1] == "ximage_7014a153542e798c" or lines[i].split(",")[1] == "ximage_014a153542e798c":
                                     shader.inputs["Albedo"].default_value = [0.017,0.017,0.023,1]
                                     shader.inputs["Albedo Alpha"].default_value = [1,1,1,1]
                                 elif lines[i].split(",")[1] == "ximage_18b3d69e4258c738":
@@ -121,6 +121,16 @@ def Main(Filepath, context):
                                         tex_image_node.label = "Albedo"
                                         tex_image_node.image.alpha_mode = "CHANNEL_PACKED"
                                         link(tex_image_node.outputs["Color"], shader.inputs["Albedo"])
+                                        """ -Test Later
+                                        pixel_float = Albedo.size[0] * Albedo.size[1]
+                                        alpha_px = 3
+                                        for i in range(64):
+                                            if Albedo.pixels[alpha_px] < 0.9999:
+                                                link(tex_image_node.outputs["Alpha"], shader.inputs["Albedo Alpha"])
+                                                break
+                                            alpha_px = random.randint(1, pixel_float) * 4 - 1
+                                            print(alpha_px)
+                                        """
                                         pixel_float = Albedo.size[0] * Albedo.size[1] * 4
                                         test_num = (Albedo.size[0] + Albedo.size[1]) / 2 * 32
                                         am =int(pixel_float/4/test_num)
@@ -192,9 +202,9 @@ def Main(Filepath, context):
                                 UseDN_1 = False
                             elif lines[i].split(",")[0] == "unk_semantic_0x8":
                                 if "Emission" in shader.inputs:
-                                    if lines[i].split(",")[1] == "ximage_3c29eeff15212c37":
+                                    if lines[i].split(",")[1] == "ximage_3c29eeff15212c37" or lines[i].split(",")[1] == "ximage_c29eeff15212c37":
                                         shader.inputs["Emission"].default_value = [1,1,1,1]
-                                    elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
+                                    elif lines[i].split(",")[1] == "ximage_4a882744bc523875" or lines[i].split(",")[1] == "ximage_a882744bc523875":
                                         shader.inputs["Emission"].default_value = [0,0,0,1]
                                     else:
                                         if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
@@ -208,9 +218,9 @@ def Main(Filepath, context):
                                             link(tex_image_node.outputs["Color"], shader.inputs["Emission"])
                             elif lines[i].split(",")[0] == "unk_semantic_0xC":
                                 if "Alpha" in shader.inputs:
-                                    if lines[i].split(",")[1] == "ximage_3c29eeff15212c37":
+                                    if lines[i].split(",")[1] == "ximage_3c29eeff15212c37" or lines[i].split(",")[1] == "ximage_c29eeff15212c37":
                                         shader.inputs["Alpha"].default_value = 1
-                                    elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
+                                    elif lines[i].split(",")[1] == "ximage_4a882744bc523875" or lines[i].split(",")[1] == "ximage_a882744bc523875":
                                         shader.inputs["Alpha"].default_value = 0
                                         mat.blend_method = "HASHED"
                                     else:
@@ -227,11 +237,11 @@ def Main(Filepath, context):
                                             tex_image_node.image.colorspace_settings.name = "Non-Color"
                             elif lines[i].split(",")[0] == "unk_semantic_0x22":
                                 if "Transparency" in shader.inputs:
-                                    if lines[i].split(",")[1] == "ximage_3c29eeff15212c37":
+                                    if lines[i].split(",")[1] == "ximage_3c29eeff15212c37" or lines[i].split(",")[1] == "ximage_c29eeff15212c37":
                                         shader.inputs["Transparency"].default_value = 1
                                         shader.inputs["Use Transparency"].default_value = 1
                                         mat.blend_method = "BLEND"
-                                    elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
+                                    elif lines[i].split(",")[1] == "ximage_4a882744bc523875" or lines[i].split(",")[1] == "ximage_a882744bc523875":
                                         shader.inputs["Transparency"].default_value = 0
                                     else:
                                         if os.path.isfile(img_folder + "\\" + lines[i].split(",")[1] + img_format):
@@ -247,9 +257,9 @@ def Main(Filepath, context):
                                             link(tex_image_node.outputs["Color"], shader.inputs["Transparency"])
                             elif lines[i].split(",")[0] == "unk_semantic_0x26":
                                 if "Specular" in shader.inputs:
-                                    if lines[i].split(",")[1] == "ximage_3c29eeff15212c37":
+                                    if lines[i].split(",")[1] == "ximage_3c29eeff15212c37" or lines[i].split(",")[1] == "ximage_c29eeff15212c37":
                                         shader.inputs["Specular"].default_value = 1
-                                    elif lines[i].split(",")[1] == "ximage_4a882744bc523875":
+                                    elif lines[i].split(",")[1] == "ximage_4a882744bc523875" or lines[i].split(",")[1] == "ximage_a882744bc523875":
                                         shader.inputs["Specular"].default_value = 0
                                         mat.blend_method = "HASHED"
                                     else:
